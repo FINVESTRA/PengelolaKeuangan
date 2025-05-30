@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Aplikasi Pengelola Keuangan</title>
+  <style>
+    :root {
+      --primary: #4e73df;
+      --bg: linear-gradient(135deg, #a8edea, #fed6e3);
+      --text: #343a40;
+      --card: #ffffffcc;
+      --border: #dee2e6;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg);
+      padding: 20px;
+      color: var(--text);
+      min-height: 100vh;
+      background-attachment: fixed;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 750px;
+      margin: auto;
+      background: var(--card);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+    }
+
+    h1, h2, h3 {
+      text-align: center;
+      color: var(--primary);
+      margin-bottom: 10px;
+      text-shadow: 1px 1px 2px #fff;
+    }
+
+    label {
+      display: block;
+      margin: 8px 0 4px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: 0.2s ease;
+    }
+
+    .result, .suggestion {
+      margin-top: 30px;
+      padding: 20px;
+      background: var(--card);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      backdrop-filter: blur(8px);
+      display: none;
+    }
+
+    .highlight {
+      color: #dc2626;
+      font-weight: bold;
+    }
+
+    .watermark {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-25deg);
+      font-size: 60px;
+      font-weight: bold;
+      color: rgba(255, 255, 255, 0.25);
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.15);
+      -webkit-text-stroke: 0.8px rgba(0, 0, 0, 0.2);
+      pointer-events: none;
+      user-select: none;
+      z-index: 0;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Aplikasi Pengelola Keuangan</h1>
+    <h2>Input Data Keuangan</h2>
+
+    <label for="pendapatan">Pendapatan Bulanan</label>
+    <input type="number" id="pendapatan" placeholder="Misal: 5000000" />
+
+    <h3>Pengeluaran Bulanan</h3>
+    <label for="makan">Makan</label><input type="number" id="makan" />
+    <label for="jajan">Jajan</label><input type="number" id="jajan" />
+    <label for="bensin">Bensin</label><input type="number" id="bensin" />
+    <label for="rokok">Rokok</label><input type="number" id="rokok" />
+    <label for="hutang">Bayar Hutang</label><input type="number" id="hutang" />
+    <label for="listrik">Listrik</label><input type="number" id="listrik" />
+    <label for="air">Air</label><input type="number" id="air" />
+    <label for="sabun">Sabun</label><input type="number" id="sabun" />
+    <label for="internet">Internet</label><input type="number" id="internet" />
+    <label for="lainnya">Lainnya</label><input type="number" id="lainnya" />
+
+    <button onclick="hitungKeuangan()">Hitung</button>
+
+    <div class="result" id="hasil"></div>
+    <div class="suggestion" id="saran"></div>
+  </div>
+
+  <div class="watermark">Finvestra</div>
+
+  <script>
+    function formatRupiah(num) {
+      return num.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' });
+    }
+
+    function hitungKeuangan() {
+      const P = +document.getElementById('pendapatan').value || 0;
+      const M = +document.getElementById('makan').value || 0;
+      const J = +document.getElementById('jajan').value || 0;
+      const Bn = +document.getElementById('bensin').value || 0;
+      const R = +document.getElementById('rokok').value || 0;
+      const H = +document.getElementById('hutang').value || 0;
+      const L = +document.getElementById('listrik').value || 0;
+      const A = +document.getElementById('air').value || 0;
+      const S = +document.getElementById('sabun').value || 0;
+      const I = +document.getElementById('internet').value || 0;
+      const X = +document.getElementById('lainnya').value || 0;
+
+      const totalKeluar = M + J + Bn + R + H + L + A + S + I + X;
+      const sisa = P - totalKeluar;
+      const danaDarurat = P * 0.10;
+      const investasi = P * 0.15;
+      const hasilInvestasi = investasi * Math.pow(1 + 0.20, 25);
+
+      const hasil = document.getElementById('hasil');
+      const saran = document.getElementById('saran');
+
+      hasil.style.display = 'block';
+      saran.style.display = 'block';
+
+      hasil.innerHTML = `
+        <h3>Ringkasan Keuangan</h3>
+        <p>Pendapatan: <b>${formatRupiah(P)}</b></p>
+        <p>Total Pengeluaran: <b>${formatRupiah(totalKeluar)}</b></p>
+        <p>Sisa Setelah Pengeluaran: <b>${formatRupiah(sisa)}</b></p>
+        <hr>
+        <h3>Alokasi Ideal</h3>
+        <p>Dana Darurat (10%): ${formatRupiah(danaDarurat)}</p>
+        <p>Investasi (15%): ${formatRupiah(investasi)}</p>
+        <p>Estimasi Hasil Investasi (20%/thn, 25 thn): <b>${formatRupiah(hasilInvestasi)}</b></p>
+      `;
+
+      let saranHTML = `<h3>Saran Keuangan</h3>`;
+
+      if (totalKeluar > P) {
+        saranHTML += `
+          <p class="highlight">⚠️ Total alokasi ideal melebihi sisa pendapatan setelah pengeluaran!</p>
+          <p>Saran: Kurangi pengeluaran, terutama dari kategori rokok, lalu pertimbangkan pengurangan pada kategori jajan, makan, dan bensin.</p>
+          <p>Pengeluaran Anda melebihi pendapatan. Pertimbangkan untuk mengurangi pengeluaran harian atau meninjau kembali prioritas pengeluaran Anda.</p>
+          <p>Selain itu, Anda juga perlu menambah penghasilan. Salah satu ide menarik adalah bergabung dengan program afiliasi Paket 100 Game. Industri game yang terus berkembang menawarkan potensi pasar yang besar, sehingga komisi dari penjualan afiliasi dapat membantu menambah pendapatan Anda. Info selengkapnya: <a href="https://coinspirasidigital.com/ebook-lunas-hutang/" target="_blank">https://coinspirasidigital.com/ebook-lunas-hutang/</a></p>
+          <p>Kalau kamu daftar pakai kode Ajaib adiw9rfw, kita berdua bisa otomatis dapat hadiah saham hingga Rp100 juta setelah kamu beli saham pertamamu. Klik di sini: <a href="https://referral.ajaib.co.id/DjbN" target="_blank">https://referral.ajaib.co.id/DjbN</a></p>
+        `;
+      } else if (totalKeluar === P) {
+        saranHTML += `
+          <p>Pengeluaran Anda sama dengan pendapatan. Anda hidup pas-pasan.</p>
+          <p>Pertimbangkan untuk meninjau kembali pengeluaran harian, mengurangi biaya tidak penting, atau mencari cara menambah pendapatan tambahan.</p>
+          <p>Gabung program afiliasi Paket 100 Game bisa jadi opsi untuk menambah penghasilan. Info selengkapnya: <a href="https://coinspirasidigital.com/ebook-lunas-hutang/" target="_blank">https://coinspirasidigital.com/ebook-lunas-hutang/</a></p>
+          <p>Kalau kamu daftar pakai kode Ajaib adiw9rfw, kita berdua bisa otomatis dapat hadiah saham hingga Rp100 juta setelah kamu beli saham pertamamu. Klik di sini: <a href="https://referral.ajaib.co.id/DjbN" target="_blank">https://referral.ajaib.co.id/DjbN</a></p>
+        `;
+      } else {
+        saranHTML += `
+          <p>Berdasarkan pendapatan Anda, disarankan menyisihkan 10% untuk dana darurat dan 15% untuk investasi.</p>
+          <p>Pastikan dana darurat cukup menutup 3–6 bulan pengeluaran rutin.</p>
+          <p>Jika Anda ingin menambah pendapatan, Anda bisa bergabung program afiliasi dengan modal Rp 20.000 dan potensi penghasilan hingga Rp 421.050.000. <a href="#">Info selengkapnya</a></p>
+          <p>Kalau kamu daftar pakai kode Ajaib adiw9rfw, kita berdua bisa otomatis dapat hadiah saham hingga Rp100 juta setelah kamu beli saham pertamamu. Klik di sini: <a href="https://referral.ajaib.co.id/DjbN" target="_blank">https://referral.ajaib.co.id/DjbN</a></p>
+        `;
+      }
+
+      saran.innerHTML = saranHTML;
+    }
+  </script>
+</body>
+</html>
