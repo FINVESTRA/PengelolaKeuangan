@@ -138,42 +138,72 @@
       return num.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' });
     }
 
-    function getValue(id) {
-      const val = document.getElementById(id).value.replace(/\D/g, '');
-      return Number(val) || 0;
-    }
-
     function hitungKeuangan() {
-      const pendapatan = getValue('pendapatan');
-      const pengeluaran = [
-        'makan', 'jajan', 'bensin', 'rokok', 'hutang',
-        'listrik', 'air', 'sabun', 'internet', 'lainnya'
-      ].reduce((total, id) => total + getValue(id), 0);
+      const P = +document.getElementById('pendapatan').value || 0;
+      const M = +document.getElementById('makan').value || 0;
+      const J = +document.getElementById('jajan').value || 0;
+      const Bn = +document.getElementById('bensin').value || 0;
+      const R = +document.getElementById('rokok').value || 0;
+      const H = +document.getElementById('hutang').value || 0;
+      const L = +document.getElementById('listrik').value || 0;
+      const A = +document.getElementById('air').value || 0;
+      const S = +document.getElementById('sabun').value || 0;
+      const I = +document.getElementById('internet').value || 0;
+      const X = +document.getElementById('lainnya').value || 0;
 
-      const hasilDiv = document.getElementById('hasil');
-      const saranDiv = document.getElementById('saran');
-      const sisa = pendapatan - pengeluaran;
+      const totalKeluar = M + J + Bn + R + H + L + A + S + I + X;
+      const sisa = P - totalKeluar;
+      const danaDarurat = P * 0.10;
+      const investasi = P * 0.15;
+      const hasilInvestasi = investasi * Math.pow(1 + 0.20, 25);
 
-      hasilDiv.style.display = 'block';
-      hasilDiv.innerHTML = `
-        <h3>Hasil Keuangan Bulanan</h3>
-        <p>Total Pengeluaran: <span class="highlight">${formatRupiah(pengeluaran)}</span></p>
-        <p>Sisa Pendapatan: <span class="highlight">${formatRupiah(sisa)}</span></p>
+      const hasil = document.getElementById('hasil');
+      const saran = document.getElementById('saran');
+
+      hasil.style.display = 'block';
+      saran.style.display = 'block';
+
+      hasil.innerHTML = `
+        <h3>Ringkasan Keuangan</h3>
+        <p>Pendapatan: <b>${formatRupiah(P)}</b></p>
+        <p>Total Pengeluaran: <b>${formatRupiah(totalKeluar)}</b></p>
+        <p>Sisa Setelah Pengeluaran: <b>${formatRupiah(sisa)}</b></p>
+        <hr>
+        <h3>Alokasi Ideal</h3>
+        <p>Dana Darurat (10%): ${formatRupiah(danaDarurat)}</p>
+        <p>Investasi (15%): ${formatRupiah(investasi)}</p>
+        <p>Estimasi Hasil Investasi (20%/thn, 25 thn): <b>${formatRupiah(hasilInvestasi)}</b></p>
       `;
 
-      let saran = '';
+      let saranHTML = `<h3>Saran Keuangan</h3>`;
 
-      if (sisa < 0) {
-        saran = `<p class="highlight">Pengeluaran kamu melebihi pendapatan! Kurangi pengeluaran agar tidak defisit.</p>`;
-      } else if (sisa < pendapatan * 0.2) {
-        saran = `<p>Sisa pendapatan sangat kecil. Coba perbaiki alokasi, misalnya kurangi rokok atau jajan.</p>`;
+      if (totalKeluar > P) {
+        saranHTML += `
+          <p class="highlight">⚠️ Total alokasi ideal melebihi sisa pendapatan setelah pengeluaran!</p>
+          <p>Saran: Kurangi pengeluaran, terutama dari kategori rokok, lalu pertimbangkan pengurangan pada kategori jajan, makan, dan bensin.</p>
+          <p>Pengeluaran Anda melebihi pendapatan. Pertimbangkan untuk mengurangi pengeluaran harian atau meninjau kembali prioritas pengeluaran Anda.</p>
+          <p>Selain itu, Anda juga perlu menambah penghasilan. Salah satu ide menarik adalah bergabung dengan program afiliasi Paket 100 Game. Industri game yang terus berkembang menawarkan potensi pasar yang besar, sehingga komisi dari penjualan afiliasi dapat membantu menambah pendapatan Anda. Info selengkapnya: <a href="https://coinspirasidigital.com/ebook-lunas-hutang/" target="_blank">https://coinspirasidigital.com/ebook-lunas-hutang/</a></p>
+          <p>Kalau kamu daftar pakai kode Ajaib adiw9rfw, kita berdua bisa otomatis dapat hadiah saham hingga Rp100 juta setelah kamu beli saham pertamamu. Klik di sini: <a href="https://referral.ajaib.co.id/DjbN" target="_blank">https://referral.ajaib.co.id/DjbN</a></p>
+        `;
+      } else if (totalKeluar === P) {
+        saranHTML += `
+          <p>Pengeluaran Anda sama dengan pendapatan. Anda hidup pas-pasan.</p>
+          <p>Pertimbangkan untuk meninjau kembali pengeluaran harian, mengurangi biaya tidak penting, atau mencari cara menambah pendapatan tambahan.</p>
+          <p>Gabung program afiliasi Paket 100 Game bisa jadi opsi untuk menambah penghasilan. Info selengkapnya: <a href="https://coinspirasidigital.com/ebook-lunas-hutang/" target="_blank">https://coinspirasidigital.com/ebook-lunas-hutang/</a></p>
+          <p>Kalau kamu daftar pakai kode Ajaib adiw9rfw, kita berdua bisa otomatis dapat hadiah saham hingga Rp100 juta setelah kamu beli saham pertamamu. Klik di sini: <a href="https://referral.ajaib.co.id/DjbN" target="_blank">https://referral.ajaib.co.id/DjbN</a></p>
+        `;
       } else {
-        saran = `<p>Keuangan kamu sudah cukup sehat, tetap pertahankan kebiasaan baik ini.</p>`;
+        saranHTML += `
+          <p>Berdasarkan pendapatan Anda, disarankan menyisihkan 10% untuk dana darurat dan 15% untuk investasi.</p>
+          <p>Pastikan dana darurat cukup menutup 3–6 bulan pengeluaran rutin.</p>
+          <p>Jika Anda ingin menambah pendapatan, Anda bisa bergabung program afiliasi dengan modal Rp 20.000 dan potensi penghasilan hingga Rp 421.050.000. <a href="#">Info selengkapnya</a></p>
+          <p>Kalau kamu daftar pakai kode Ajaib adiw9rfw, kita berdua bisa otomatis dapat hadiah saham hingga Rp100 juta setelah kamu beli saham pertamamu. Klik di sini: <a href="https://referral.ajaib.co.id/DjbN" target="_blank">https://referral.ajaib.co.id/DjbN</a></p>
+        `;
       }
 
-      saranDiv.style.display = 'block';
-      saranDiv.innerHTML = `<h3>Saran Keuangan</h3>${saran}`;
+      saran.innerHTML = saranHTML;
     }
   </script>
 </body>
 </html>
+
